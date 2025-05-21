@@ -1,8 +1,7 @@
-/* Import Source Code Pro from Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap');
+/* Import Google Fonts - Ensure these are linked in your HTML as well */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Source+Code+Pro:wght@400;600&display=swap');
 
-
-/* Universal Styles (Keeping previous modern setup) */
+/* Universal Styles - Modernized */
 * {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   color: #333333;
@@ -11,6 +10,7 @@
   box-sizing: border-box;
 }
 
+/* Base body styling for consistent light theme */
 body {
     background: #F0F2F5;
     min-height: 100vh;
@@ -18,7 +18,8 @@ body {
     flex-direction: column;
 }
 
-/* Layout Containers (Keeping previous modern setup) */
+
+/* Layout Containers - Modernized (Desktop Default) */
 .calculator-container {
   margin-top: 5vh;
   display: flex;
@@ -34,7 +35,7 @@ body {
     "header header"
     "menu content"
     "footer footer";
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 250px 1fr; /* Default desktop layout */
   gap: 20px;
   padding: 20px;
   max-width: 1200px;
@@ -72,11 +73,9 @@ body {
 
 .container > div.content {
   grid-area: content;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
+  display: block; /* Allows project grid to manage its own layout */
+  text-align: left;
+  padding: 25px;
   background: #FFFFFF;
   box-shadow: none;
 }
@@ -102,66 +101,62 @@ body {
     margin-bottom: 0;
 }
 
-.my-projects-h1{
-  font-family: 'Source Code Pro', monospace;
-  font-weight: bold; 
-}
-
-.content h1 {
+.content h2 {
     font-size: 2.2em;
-    margin-bottom: 15px;
+    margin-bottom: 30px;
     font-weight: 600;
     color: #333333;
+    text-align: center;
 }
 
 .content p {
     font-size: 1.1em;
     line-height: 1.7;
     max-width: 80%;
-    margin: 0 auto 25px auto;
+    margin: 0 auto 40px auto;
     color: #555555;
+    text-align: center;
 }
 
-/* --- NEW CSS FOR ANIMATED TEXT LINK --- */
+/* Animated Text Link Styling */
 .animated-text-link {
-  font-family: 'Source Code Pro', monospace; /* Apply Source Code Pro font */
-  font-size: 1.1rem; /* Adjust size as needed */
-  font-weight: 600; /* Bolder for prominence */
-  color: #007BFF; /* Link color - same as button accent */
-  text-decoration: none; /* Remove default underline */
-  position: relative; /* Needed for pseudo-element positioning */
-  display: inline-block; /* Allows width calculation */
-  padding: 10px 0; /* Add some vertical padding for hover area */
-  overflow: hidden; /* Crucial for the typing effect */
-  white-space: nowrap; /* Keep text on one line */
-  transition: color 0.3s ease; /* Smooth color transition on hover */
+  font-family: 'Source Code Pro', monospace;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #007BFF;
+  text-decoration: none;
+  position: relative;
+  display: inline-block;
+  padding: 10px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: color 0.3s ease;
 }
 
 .animated-text-link::after {
-  content: ''; /* Empty content for the pseudo-element */
+  content: '';
   position: absolute;
-  bottom: 0; /* Position at the bottom of the text */
+  bottom: 0;
   left: 0;
-  width: 0%; /* Start with no width */
-  height: 2px; /* Line thickness */
-  background: #007BFF; /* Blue line color */
-  transition: width 0.3s ease; /* Smooth width transition */
+  width: 0%;
+  height: 2px;
+  background: #007BFF;
+  transition: width 0.3s ease;
 }
 
-/* Typing animation for the text */
 .animated-text-link span {
   display: inline-block;
-  opacity: 0; /* Start invisible */
-  transform: translateX(-10px); /* Slightly off-set */
-  transition: opacity 0.05s ease-in, transform 0.05s ease-in; /* Quick reveal */
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.05s ease-in, transform 0.05s ease-in;
 }
 
 .animated-text-link:hover {
-  color: #0056b3; /* Darker blue on hover */
+  color: #0056b3;
 }
 
 .animated-text-link:hover::after {
-  width: 100%; /* Expand underline on hover */
+  width: 100%;
 }
 
 /* Keyframes for the typing animation */
@@ -170,64 +165,50 @@ body {
   100% { opacity: 1; transform: translateX(0); }
 }
 
-/* --- New CSS for Project Grid --- */
-
-.content {
-  /* Remove flex centering if you want projects to start from the top left */
-  /* If you want to keep centering the grid when it's small, keep the flex properties. */
-  display: block; /* Change to block to let grid manage its own layout */
-  text-align: left; /* Reset text-align for content children */
-  padding: 25px; /* Ensure content area has padding */
-}
-
-/* Adjust h2 and p within content if they are still needed above the grid */
-.content h2 {
-    font-size: 2.2em;
-    margin-bottom: 30px; /* Add more space below title */
-    font-weight: 600;
-    color: #333333;
-    text-align: center; /* Center project page heading */
-}
-
-.content p {
-    font-size: 1.1em;
-    line-height: 1.7;
-    max-width: 80%;
-    margin: 0 auto 40px auto; /* More margin below description */
+/* Menu Link Specific Styling */
+.menu .animated-text-link {
+    display: block;
+    padding: 10px 15px; /* Added horizontal padding for menu items */
+    margin-bottom: 5px;
+    text-align: left;
     color: #555555;
-    text-align: center; /* Center project page description */
+}
+
+.menu .animated-text-link:hover {
+    color: #007BFF;
 }
 
 
+/* Project Grid Styling */
 .project-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive grid columns */
-    gap: 30px; /* Space between project boxes */
-    padding: 0px; /* Padding for the grid itself */
-    justify-content: center; /* Center grid items if they don't fill the row */
-    align-items: stretch; /* Make all boxes same height */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 0px;
+    justify-content: center;
+    align-items: stretch;
 }
 
 .project-box {
-    background: #FFFFFF; /* White background for each project box */
-    border-radius: 10px; /* Slightly more rounded corners than general elements */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); /* More prominent shadow for individual boxes */
+    background: #FFFFFF;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
     padding: 25px;
-    text-align: center; /* Center content within each box */
-    display: flex; /* Use flexbox for internal content alignment */
-    flex-direction: column; /* Stack content vertically */
-    justify-content: space-between; /* Push link to bottom */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth hover transition */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .project-box:hover {
-    transform: translateY(-5px); /* Lift effect on hover */
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12); /* Enhanced shadow on hover */
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .project-box h3 {
     font-size: 1.6em;
-    color: #007BFF; /* Accent color for project titles */
+    color: #007BFF;
     margin-bottom: 15px;
     font-weight: 600;
 }
@@ -237,38 +218,156 @@ body {
     color: #555555;
     line-height: 1.6;
     margin-bottom: 20px;
-    flex-grow: 1; /* Allow description to take up available space */
-    max-width: 100%; /* Remove previous max-width from general content p */
-    text-align: center; /* Ensure project description is centered */
+    flex-grow: 1;
+    max-width: 100%;
+    text-align: center;
 }
 
 .project-box img {
     max-width: 100%;
     height: auto;
-    border-radius: 6px; /* Slightly rounded images */
+    border-radius: 6px;
     margin-bottom: 20px;
-    display: block; /* Remove extra space below image */
-    object-fit: cover; /* Ensures image covers area without distorting */
+    display: block;
+    object-fit: cover;
 }
 
-/* Adjustments for the button within project box */
-.project-box .button-62 {
-    margin-top: 15px; /* Add space above the button */
-    padding: 0.75rem 1.5rem; /* Adjust padding for a compact button */
-    font-size: 0.95rem; /* Slightly smaller font for button */
-    width: auto; /* Allow button to size naturally */
-    display: inline-block; /* Ensure it's inline-block */
+
+/* ========================================================= */
+/* RESPONSIVE DESIGN (MEDIA QUERIES)       */
+/* ========================================================= */
+
+/* Tablet and smaller desktops */
+@media (max-width: 992px) {
+    .container {
+        grid-template-columns: 1fr; /* Stack menu and content */
+        grid-template-areas:
+            "header"
+            "menu"
+            "content"
+            "footer";
+        padding: 15px; /* Slightly less padding */
+        gap: 15px; /* Slightly less gap */
+    }
+
+    .container > div {
+        padding: 20px; /* Adjust internal padding */
+    }
+
+    .container > div.menu {
+        border-right: none; /* Remove right border */
+        border-bottom: 1px solid #E0E0E0; /* Add bottom border */
+        text-align: center; /* Center menu items */
+        padding-right: 20px; /* Restore padding */
+    }
+
+    .menu .animated-text-link {
+        display: inline-block; /* Display links inline for horizontal layout */
+        margin: 0 10px 5px 10px; /* Add horizontal margin */
+        padding: 5px 10px; /* Adjust padding for smaller horizontal links */
+    }
+
+    .project-grid {
+        gap: 20px; /* Reduce gap between project boxes */
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Allow smaller min-width for projects */
+    }
+
+    .header h1 {
+        font-size: 2.4em;
+    }
+
+    .content h2 {
+        font-size: 1.8em;
+    }
+
+    .content p {
+        font-size: 1em;
+    }
 }
 
-/* Ensure animated-text-link has proper spacing in the menu */
-.menu .animated-text-link {
-    display: block; /* Make links block level to take full width */
-    padding: 10px 0; /* Adjust vertical padding */
-    margin-bottom: 5px; /* Space between links */
-    text-align: left; /* Align text to the left */
-    color: #555555; /* Match menu text color */
+/* Mobile Phones */
+@media (max-width: 768px) {
+    .calculator-container {
+        margin-top: 2vh; /* Reduce top margin for mobile */
+    }
+
+    .container {
+        padding: 10px;
+        gap: 10px;
+        border-radius: 8px; /* Slightly less rounded */
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+    }
+
+    .container > div {
+        padding: 15px; /* Even less internal padding */
+    }
+
+    .header h1 {
+        font-size: 2em;
+    }
+
+    .content h2 {
+        font-size: 1.6em;
+        margin-bottom: 20px;
+    }
+
+    .content p {
+        font-size: 0.9em;
+        line-height: 1.5;
+        margin: 0 auto 25px auto;
+        max-width: 95%; /* Allow content to take more width */
+    }
+
+    .project-grid {
+        gap: 15px;
+        grid-template-columns: 1fr; /* Force single column for mobile */
+    }
+
+    .project-box {
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 3px 15px rgba(0, 0, 0, 0.06);
+    }
+
+    .project-box h3 {
+        font-size: 1.4em;
+        margin-bottom: 10px;
+    }
+
+    .project-box p {
+        font-size: 0.85em;
+        margin-bottom: 15px;
+    }
+
+    .footer p {
+        font-size: 0.8em;
+    }
+
+    .menu .animated-text-link {
+        /* Make menu links block again for stacking vertically on very small screens */
+        display: block;
+        padding: 8px 0; /* Adjust padding */
+        margin: 0 auto 5px auto; /* Center individual links */
+        text-align: center; /* Center menu text */
+    }
 }
 
-.menu .animated-text-link:hover {
-    color: #007BFF; /* Accent color on hover */
+/* Optional: Further adjustments for very small phones (e.g., iPhone SE) */
+@media (max-width: 480px) {
+    .container {
+        padding: 5px;
+        gap: 8px;
+    }
+
+    .container > div {
+        padding: 10px;
+    }
+
+    .header h1 {
+        font-size: 1.8em;
+    }
+
+    .content h2 {
+        font-size: 1.4em;
+    }
 }
