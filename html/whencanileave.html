@@ -22,9 +22,16 @@
 
             <label for="end-time">End Time:</label>
             <input type="text" id="end-time" class="time-input" placeholder="HH:MM" required>
-
-            <label for="break-time">Break Time (minutes):</label>
-            <input type="number" id="break-time" value="0" min="0" required>
+            
+            <div class="breaktime">
+                
+                <label for="start-time">Start Break Time:</label>
+                <input type="text" id="start-break-time" class="time-input" placeholder="HH:MM" required>
+<br><br>
+                <label for="end-time">End Break Time:</label>
+                <input type="text" id="end-break-time" class="time-input" placeholder="HH:MM" required>
+            </div>
+           
 
             <label for="required-work-time">Required Daily Work (HH:MM):</label>
             <input type="text" id="required-work-time" placeholder="08:24" value="08:24" required>

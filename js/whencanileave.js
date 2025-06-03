@@ -18,6 +18,26 @@ document.addEventListener('DOMContentLoaded', () => {
         evt.element.value = value;
     });
 
+    // Initialize TimePicker for break time inputs as well
+    var startBreakTimePicker = new TimePicker('start-break-time', {
+        lang: 'en',
+        theme: 'dark'
+    });
+    startBreakTimePicker.on('change', function(evt) {
+        var value = (evt.hour || '00') + ':' + (evt.minute || '00');
+        evt.element.value = value;
+    });
+
+    var endBreakTimePicker = new TimePicker('end-break-time', {
+        lang: 'en',
+        theme: 'dark'
+    });
+    endBreakTimePicker.on('change', function(evt) {
+        var value = (evt.hour || '00') + ':' + (evt.minute || '00');
+        evt.element.value = value;
+    });
+
+
     // Handle form submission
     const form = document.getElementById('overtime-form');
     form.addEventListener('submit', function(event) {
@@ -25,18 +45,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const startTimeStr = document.getElementById('start-time').value;
         const endTimeStr = document.getElementById('end-time').value;
-        const breakTimeMinutes = parseInt(document.getElementById('break-time').value);
+        const startBreakTimeStr = document.getElementById('start-break-time').value; // Renamed for clarity
+        const endBreakTimeStr = document.getElementById('end-break-time').value;     // Renamed for clarity
         const requiredWorkTimeStr = document.getElementById('required-work-time').value;
         const currentOvertimeMinutes = parseInt(document.getElementById('current-overtime').value);
 
         const resultDiv = document.getElementById('result');
         resultDiv.innerHTML = ''; // Clear previous results
-
-        // Input validation
-        if (!startTimeStr || !endTimeStr || isNaN(breakTimeMinutes) || !requiredWorkTimeStr || isNaN(currentOvertimeMinutes)) {
-            resultDiv.innerHTML = '<p class="error">Please fill in all fields correctly.</p>';
-            return;
-        }
 
         // Parse times into minutes
         const parseTime = (timeStr) => {
@@ -49,12 +64,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const startTimeMinutes = parseTime(startTimeStr);
         const endTimeMinutes = parseTime(endTimeStr);
+        const startBreakTimeMinutes = parseTime(startBreakTimeStr);
+        const endBreakTimeMinutes = parseTime(endBreakTimeStr);
         const requiredWorkTimeTotalMinutes = parseTime(requiredWorkTimeStr);
 
-        if (startTimeMinutes === null || endTimeMinutes === null || requiredWorkTimeTotalMinutes === null) {
-            resultDiv.innerHTML = '<p class="error">Please enter times in HH:MM format (e.g., 08:30).</p>';
+        // Input validation
+        if (startTimeMinutes === null || endTimeMinutes === null || startBreakTimeMinutes === null || endBreakTimeMinutes === null || requiredWorkTimeTotalMinutes === null || isNaN(currentOvertimeMinutes)) {
+            resultDiv.innerHTML = '<p class="error">Please fill in all time fields correctly (HH:MM format) and ensure Current Overtime is a number.</p>';
             return;
         }
+        
+        // Calculate break time in minutes (moved after parsing break times)
+        const breakTimeMinutes = endBreakTimeMinutes - startBreakTimeMinutes;
+
+        // Validate break time
+        if (breakTimeMinutes < 0) {
+            resultDiv.innerHTML = '<p class="error">End break time cannot be earlier than start break time.</p>';
+            return;
+        }
+
 
         // Calculate daily working time
         let dailyWorkMinutes = endTimeMinutes - startTimeMinutes - breakTimeMinutes;
@@ -69,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Calculate new total overtime
         const newTotalOvertimeMinutes = currentOvertimeMinutes + dailyOvertimeMinutes;
-
+        
         // Calculate target leave time for neutral daily overtime (i.e., hitting required hours)
         const targetLeaveTimeMinutes = startTimeMinutes + requiredWorkTimeTotalMinutes + breakTimeMinutes;
 
@@ -87,14 +115,11 @@ document.addEventListener('DOMContentLoaded', () => {
             let minutes = totalMinutes % 60;
 
             // Handle times that spill over 24 hours (e.g., 25:30 -> 01:30 next day)
-            // For display purposes, we might want to show actual time or indicate next day
-            // For simplicity, let's keep it within 24 hours for display unless otherwise specified
             hours = hours % 24; 
 
             return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
         };
-
-
+        
         // Display results
         let dailyOvertimeStatus = '';
         if (dailyOvertimeMinutes > 0) {
