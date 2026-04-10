@@ -1,41 +1,6 @@
 // Initialize TimePicker for start and end time inputs
 document.addEventListener('DOMContentLoaded', () => {
-    var startTimePicker = new TimePicker('start-time', {
-        lang: 'en',
-        theme: 'dark'
-    });
-    startTimePicker.on('change', function(evt) {
-        var value = (evt.hour || '00') + ':' + (evt.minute || '00');
-        evt.element.value = value;
-    });
 
-    var endTimePicker = new TimePicker('end-time', {
-        lang: 'en',
-        theme: 'dark'
-    });
-    endTimePicker.on('change', function(evt) {
-        var value = (evt.hour || '00') + ':' + (evt.minute || '00');
-        evt.element.value = value;
-    });
-
-    // Initialize TimePicker for break time inputs as well
-    var startBreakTimePicker = new TimePicker('start-break-time', {
-        lang: 'en',
-        theme: 'dark'
-    });
-    startBreakTimePicker.on('change', function(evt) {
-        var value = (evt.hour || '00') + ':' + (evt.minute || '00');
-        evt.element.value = value;
-    });
-
-    var endBreakTimePicker = new TimePicker('end-break-time', {
-        lang: 'en',
-        theme: 'dark'
-    });
-    endBreakTimePicker.on('change', function(evt) {
-        var value = (evt.hour || '00') + ':' + (evt.minute || '00');
-        evt.element.value = value;
-    });
 
 
     // Handle form submission

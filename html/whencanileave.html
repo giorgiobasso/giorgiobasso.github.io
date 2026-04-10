@@ -6,8 +6,7 @@
     <title>When can I leave?</title>
     <link rel="stylesheet" href="/css/whencanileave.css">
     <link rel="stylesheet" href="/css/index.css">
-    <script src="https://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/timepicker.js/latest/timepicker.min.css" rel="stylesheet"/>
+
     <script src="/js/whencanileave.js" defer></script>
 </head>
 <body>
@@ -17,27 +16,46 @@
     <div class="calculator-container">
         <h2>Overtime Calculator</h2>
         <form id="overtime-form">
-            <label for="start-time">Start Time:</label>
-            <input type="text" id="start-time" class="time-input" placeholder="HH:MM" required>
+            <div class="input-section work-times">
+                <h4>Work Times</h4>
+                <div class="form-group time-pair">
+                    <div class="time-input-wrapper">
+                        <label for="start-time">Start Time:</label>
+                        <input type="text" id="start-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+                    </div>
+                    <div class="time-input-wrapper">
+                        <label for="end-time">End Time:</label>
+                        <input type="text" id="end-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+                    </div>
+                </div>
+            </div>
 
-            <label for="end-time">End Time:</label>
-            <input type="text" id="end-time" class="time-input" placeholder="HH:MM" required>
-            
-            <div class="breaktime">
+            <div class="input-section break-times">
                 
-                <label for="start-time">Start Break Time:</label>
-                <input type="text" id="start-break-time" class="time-input" placeholder="HH:MM" required>
-<br><br>
-                <label for="end-time">End Break Time:</label>
-                <input type="text" id="end-break-time" class="time-input" placeholder="HH:MM" required>
+                <h4>Break Times</h4>
+                <div class="form-group time-pair">
+                    <div class="time-input-wrapper">
+                        <label for="start-break-time">Start Break:</label>
+                        <input type="text" id="start-break-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+                    </div>
+                    <div class="time-input-wrapper">
+                        <label for="end-break-time">End Break:</label>
+                        <input type="text" id="end-break-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+                    </div>
+                </div>
             </div>
            
-
-            <label for="required-work-time">Required Daily Work (HH:MM):</label>
-            <input type="text" id="required-work-time" placeholder="08:24" value="08:24" required>
-
-            <label for="current-overtime">Current Total Overtime (minutes):</label>
-            <input type="number" id="current-overtime" value="0" required>
+            <div class="input-section other-inputs">
+                <div class="form-group">
+                    <label for="required-work-time">Required Daily Work (HH:MM):</label>
+                    <input type="text" id="required-work-time" placeholder="08:24" value="08:24" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="current-overtime">Current Total Overtime (minutes):</label>
+                    <input type="number" id="current-overtime" value="0" required>
+                </div>
+            </div>
 
             <button type="submit">Calculate Overtime</button>
         </form>
