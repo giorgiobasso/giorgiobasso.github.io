@@ -95,8 +95,20 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ---------- Rendern ----------
-    const row = (label, value, negative) =>
-        `<div class="item${negative ? ' neg' : ''}"><dt>${label}</dt><dd>${value}</dd></div>`;
+    // Kleines «?» mit Erklärung (Tooltip)
+    const info = (tip) =>
+        `<button type="button" class="info" aria-label="Erklärung" data-tip="${tip}">?</button>`;
+
+    const row = (label, value, negative, tip) =>
+        `<div class="item${negative ? ' neg' : ''}"><dt>${label}${tip ? info(tip) : ''}</dt><dd>${value}</dd></div>`;
+
+    // Ergebnis nur ersetzen, wenn es sich geändert hat (Tooltips bleiben offen)
+    let lastHtml = '';
+    const setResult = (html) => {
+        if (html === lastHtml) return;
+        lastHtml = html;
+        resultDiv.innerHTML = html;
+    };
 
     const render = () => {
         const raw = {};
@@ -119,12 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (balance === null) errors.push('Überstunden-Saldo');
 
         if (errors.length) {
-            resultDiv.innerHTML = `<p class="notice error">Ungültige Eingabe: ${errors.join(', ')}. Format: HH:MM (z. B. 08:30 oder 830).</p>`;
+            setResult(`<p class="notice error">Ungültige Eingabe: ${errors.join(', ')}. Format: HH:MM (z. B. 08:30 oder 830).</p>`);
             return;
         }
 
         if ((breakStart === null) !== (breakEnd === null)) {
-            resultDiv.innerHTML = '<p class="notice error">Bitte Pausenbeginn und Pausenende angeben (oder beide leer lassen).</p>';
+            setResult('<p class="notice error">Bitte Pausenbeginn und Pausenende angeben (oder beide leer lassen).</p>');
             return;
         }
 
@@ -132,13 +144,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (breakStart !== null) {
             breakMinutes = breakEnd - breakStart;
             if (breakMinutes < 0) {
-                resultDiv.innerHTML = '<p class="notice error">Das Pausenende darf nicht vor dem Pausenbeginn liegen.</p>';
+                setResult('<p class="notice error">Das Pausenende darf nicht vor dem Pausenbeginn liegen.</p>');
                 return;
             }
         }
 
         if (start === null) {
-            resultDiv.innerHTML = '<p class="empty">Trage deinen Arbeitsbeginn ein, um die Gehzeit zu sehen.</p>';
+            setResult('<p class="empty">Trage deinen Arbeitsbeginn ein, um die Gehzeit zu sehen.</p>');
             return;
         }
 
@@ -162,14 +174,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = `
             <div class="answer">
-                <span class="label">Gehzeit (Soll erreicht)</span>
+                <span class="label">Gehzeit (Soll erreicht)${info('Die Uhrzeit, zu der du deine Sollarbeitszeit inklusive Pause erreicht hast.')}</span>
                 <span class="time">${formatClock(balancedLeave)}</span>
                 ${countdown ? `<span class="countdown">${countdown}</span>` : ''}
             </div>
             <dl class="rows">
-                ${row('Ausgeglichen (Soll erreicht)', formatClock(balancedLeave))}
-                ${row(balance > 0 ? 'Saldo auf null (Überstunden abbauen)' : 'Saldo auf null', formatClock(zeroLeave))}
-                ${row(`Maximale Arbeitszeit (${formatDuration(max)})`, formatClock(maxLeave))}
+                ${row('Ausgeglichen (Soll erreicht)', formatClock(balancedLeave), false, 'Wenn du zu dieser Zeit gehst, hast du genau deine Sollarbeitszeit gearbeitet. Dein Saldo bleibt unverändert.')}
+                ${row(balance > 0 ? 'Früheste Gehzeit (Saldo abbauen)' : 'Gehzeit mit Saldo auf null', zeroLeave <= start ? 'Saldo reicht für den ganzen Tag' : formatClock(zeroLeave), false, 'Früheste Zeit, zu der du gehen kannst, wenn du heute deinen ganzen Saldo abbauen willst. Bei Minusstunden ist es später als normal.')}
+                ${row(`Späteste Gehzeit (max. ${formatDuration(max)})`, formatClock(maxLeave), false, 'Zu dieser Zeit hast du deine maximale Arbeitszeit erreicht. Länger solltest du nicht bleiben.')}
             </dl>`;
 
         // Bisheriger Tag, sobald ein Ende eingetragen ist
@@ -188,8 +200,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}"><div style="width: ${progress}%"></div></div>
             </div>
             <dl class="rows">
-                ${row('Über-/Minusstunden heute', formatSigned(daily), daily < 0)}
-                ${row('Neuer Überstunden-Saldo', formatSigned(balance + daily), balance + daily < 0)}
+                ${row('Über-/Minusstunden heute', formatSigned(daily), daily < 0, 'Unterschied zwischen heutiger Arbeitszeit und Soll. Plus = länger gearbeitet, Minus = zu kurz.')}
+                ${row('Neuer Überstunden-Saldo', formatSigned(balance + daily), balance + daily < 0, 'Dein bisheriger Saldo plus die Über-/Minusstunden von heute.')}
             </dl>`;
         }
 
@@ -202,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
             html += '<p class="notice warning">Die Sollarbeitszeit liegt über der maximalen Arbeitszeit.</p>';
         }
 
-        resultDiv.innerHTML = html;
+        setResult(html);
     };
 
     // ---------- Ereignisse ----------
