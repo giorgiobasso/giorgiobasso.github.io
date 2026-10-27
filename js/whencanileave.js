@@ -7,16 +7,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const ids = {
         start: 'start-time',
         end: 'end-time',
-        breakStart: 'start-break-time',
-        breakEnd: 'end-break-time',
         required: 'required-work-time',
         max: 'max-work-time',
         overtime: 'current-overtime',
     };
 
     // Felder, die beim nächsten Besuch wieder vorausgefüllt werden
-    const persisted = ['breakStart', 'breakEnd', 'required', 'max', 'overtime'];
+    const persisted = ['required', 'max', 'overtime'];
     const STORAGE_KEY = 'wcil-settings';
+
+    // ---------- Pausen ----------
+    const breaksDiv = $('breaks');
+    const MIN_BREAKS = 1;
+    let breakCounter = 0;
+
+    const breakField = (id, label) => `
+        <div class="field">
+            <label for="${id}">${label}</label>
+            <div class="input-group">
+                <input type="text" id="${id}" class="time-input" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
+                <button type="button" class="now" data-target="${id}" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
+            </div>
+        </div>`;
+
+    // Fügt eine Pausenzeile hinzu; ab der zweiten Pause mit «Entfernen»
+    const addBreak = (start = '', end = '') => {
+        const n = ++breakCounter;
+        const removable = breaksDiv.children.length >= MIN_BREAKS;
+        const el = document.createElement('div');
+        el.className = 'break';
+        el.innerHTML = `
+            <div class="break-head">
+                <span class="break-title"></span>
+                ${removable ? '<button type="button" class="remove-break">Entfernen</button>' : ''}
+            </div>
+            <div class="row">
+                ${breakField(`break-start-${n}`, 'Beginn')}
+                ${breakField(`break-end-${n}`, 'Ende')}
+            </div>`;
+        // Werte per DOM setzen (nicht ins HTML einbauen)
+        const inputs = el.querySelectorAll('input');
+        inputs[0].value = start || '';
+        inputs[1].value = end || '';
+        breaksDiv.appendChild(el);
+        numberBreaks();
+        return el;
+    };
+
+    const numberBreaks = () => {
+        // Bei nur einer Pause heisst sie «Pause», sonst «Pause 1», «Pause 2», …
+        const total = breaksDiv.children.length;
+        [...breaksDiv.children].forEach((el, i) => {
+            el.querySelector('.break-title').textContent = total === 1 ? 'Pause' : `Pause ${i + 1}`;
+        });
+    };
+
+    // Liest alle Pausenzeilen als Textwerte
+    const readBreaks = () => [...breaksDiv.children].map((el) => {
+        const inputs = el.querySelectorAll('input');
+        return { start: inputs[0].value, end: inputs[1].value };
+    });
 
     // ---------- Speicher ----------
     const loadSettings = () => {
@@ -25,13 +75,22 @@ document.addEventListener('DOMContentLoaded', () => {
             persisted.forEach((key) => {
                 if (typeof saved[key] === 'string') $(ids[key]).value = saved[key];
             });
+            if (Array.isArray(saved.breaks)) {
+                saved.breaks.forEach((pair) => addBreak(pair[0], pair[1]));
+            } else if (saved.breakStart || saved.breakEnd) {
+                // Alte Version mit nur einer Pause
+                addBreak(saved.breakStart, saved.breakEnd);
+            }
         } catch (e) { /* localStorage nicht verfügbar */ }
+        // Mindestens ein Pausenfeld anzeigen
+        while (breaksDiv.children.length < MIN_BREAKS) addBreak();
     };
 
     const saveSettings = () => {
         try {
             const data = {};
             persisted.forEach((key) => { data[key] = $(ids[key]).value; });
+            data.breaks = readBreaks().map((b) => [b.start, b.end]);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         } catch (e) { /* localStorage nicht verfügbar */ }
     };
@@ -119,10 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (raw.start.trim() !== '' && start === null) errors.push('Beginn');
         const end = raw.end.trim() === '' ? null : parseTime(raw.end);
         if (raw.end.trim() !== '' && end === null) errors.push('Ende');
-        const breakStart = raw.breakStart.trim() === '' ? null : parseTime(raw.breakStart);
-        if (raw.breakStart.trim() !== '' && breakStart === null) errors.push('Pausenbeginn');
-        const breakEnd = raw.breakEnd.trim() === '' ? null : parseTime(raw.breakEnd);
-        if (raw.breakEnd.trim() !== '' && breakEnd === null) errors.push('Pausenende');
         const required = parseDuration(raw.required);
         if (required === null) errors.push('Sollarbeitszeit');
         const max = parseDuration(raw.max);
@@ -135,18 +190,26 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if ((breakStart === null) !== (breakEnd === null)) {
-            setResult('<p class="notice error">Bitte Pausenbeginn und Pausenende angeben (oder beide leer lassen).</p>');
-            return;
-        }
-
+        // Pausen summieren; komplett leere Zeilen werden ignoriert
         let breakMinutes = 0;
-        if (breakStart !== null) {
-            breakMinutes = breakEnd - breakStart;
-            if (breakMinutes < 0) {
-                setResult('<p class="notice error">Das Pausenende darf nicht vor dem Pausenbeginn liegen.</p>');
-                return;
+        const breakErrors = [];
+        readBreaks().forEach((b, i) => {
+            const bs = b.start.trim();
+            const be = b.end.trim();
+            if (bs === '' && be === '') return;
+            const startMin = parseTime(bs);
+            const endMin = parseTime(be);
+            if (bs === '' || be === '' || startMin === null || endMin === null) {
+                breakErrors.push(`Pause ${i + 1}: Beginn und Ende im Format HH:MM angeben (oder beide leer lassen).`);
+            } else if (endMin < startMin) {
+                breakErrors.push(`Pause ${i + 1}: Das Ende darf nicht vor dem Beginn liegen.`);
+            } else {
+                breakMinutes += endMin - startMin;
             }
+        });
+        if (breakErrors.length) {
+            setResult(`<p class="notice error">${breakErrors.join('<br>')}</p>`);
+            return;
         }
 
         if (start === null) {
@@ -174,14 +237,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let html = `
             <div class="answer">
-                <span class="label">Gehzeit (Soll erreicht)${info('Die Uhrzeit, zu der du deine Sollarbeitszeit inklusive Pause erreicht hast.')}</span>
+                <span class="label">Gehzeit (Soll erreicht)</span>
                 <span class="time">${formatClock(balancedLeave)}</span>
                 ${countdown ? `<span class="countdown">${countdown}</span>` : ''}
             </div>
             <dl class="rows">
-                ${row('Ausgeglichen (Soll erreicht)', formatClock(balancedLeave), false, 'Wenn du zu dieser Zeit gehst, hast du genau deine Sollarbeitszeit gearbeitet. Dein Saldo bleibt unverändert.')}
+                ${row('Ausgeglichen (Soll erreicht)', formatClock(balancedLeave))}
                 ${row(balance > 0 ? 'Früheste Gehzeit (Saldo abbauen)' : 'Gehzeit mit Saldo auf null', zeroLeave <= start ? 'Saldo reicht für den ganzen Tag' : formatClock(zeroLeave), false, 'Früheste Zeit, zu der du gehen kannst, wenn du heute deinen ganzen Saldo abbauen willst. Bei Minusstunden ist es später als normal.')}
-                ${row(`Späteste Gehzeit (max. ${formatDuration(max)})`, formatClock(maxLeave), false, 'Zu dieser Zeit hast du deine maximale Arbeitszeit erreicht. Länger solltest du nicht bleiben.')}
+                ${row(`Späteste Gehzeit (max. ${formatDuration(max)})`, formatClock(maxLeave))}
             </dl>`;
 
         // Bisheriger Tag, sobald ein Ende eingetragen ist
@@ -200,8 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progress}"><div style="width: ${progress}%"></div></div>
             </div>
             <dl class="rows">
-                ${row('Über-/Minusstunden heute', formatSigned(daily), daily < 0, 'Unterschied zwischen heutiger Arbeitszeit und Soll. Plus = länger gearbeitet, Minus = zu kurz.')}
-                ${row('Neuer Überstunden-Saldo', formatSigned(balance + daily), balance + daily < 0, 'Dein bisheriger Saldo plus die Über-/Minusstunden von heute.')}
+                ${row('Über-/Minusstunden heute', formatSigned(daily), daily < 0)}
+                ${row('Neuer Überstunden-Saldo', formatSigned(balance + daily), balance + daily < 0)}
             </dl>`;
         }
 
@@ -219,28 +282,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ---------- Ereignisse ----------
     // Eingaben beim Verlassen des Feldes normalisieren (830 -> 08:30)
-    const timeFields = ['start', 'end', 'breakStart', 'breakEnd', 'required', 'max'];
-    timeFields.forEach((key) => {
-        $(ids[key]).addEventListener('blur', (event) => {
-            const minutes = parseTime(event.target.value);
-            if (minutes !== null) event.target.value = formatDuration(minutes);
-            render();
-            saveSettings();
-        });
+    const normalizeIds = new Set([ids.start, ids.end, ids.required, ids.max]);
+    form.addEventListener('focusout', (event) => {
+        const input = event.target;
+        if (input.tagName !== 'INPUT') return;
+        if (!normalizeIds.has(input.id) && !input.classList.contains('time-input')) return;
+        const minutes = parseTime(input.value);
+        if (minutes !== null) input.value = formatDuration(minutes);
+        render();
+        saveSettings();
     });
 
     // Live-Berechnung bei jeder Eingabe
     form.addEventListener('input', () => { render(); saveSettings(); });
     form.addEventListener('submit', (event) => event.preventDefault());
 
-    // «Jetzt»-Buttons tragen die aktuelle Uhrzeit ein
-    document.querySelectorAll('.now').forEach((button) => {
-        button.addEventListener('click', () => {
+    // «Jetzt»-Buttons tragen die aktuelle Uhrzeit ein, «Entfernen» löscht eine Pause
+    form.addEventListener('click', (event) => {
+        const nowButton = event.target.closest('.now');
+        if (nowButton) {
             const now = new Date();
-            $(button.dataset.target).value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-            render();
-            saveSettings();
-        });
+            $(nowButton.dataset.target).value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        } else if (event.target.closest('.remove-break')) {
+            event.target.closest('.break').remove();
+            numberBreaks();
+        } else if (event.target.closest('#add-break')) {
+            addBreak().querySelector('input').focus();
+            return;
+        } else {
+            return;
+        }
+        render();
+        saveSettings();
     });
 
     // Beginn und Ende des Tages zurücksetzen (Vorgaben bleiben)

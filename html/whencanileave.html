@@ -32,7 +32,7 @@
                         </div>
                     </div>
                     <div class="field">
-                        <div class="label-row"><label for="end-time">Ende (optional)</label><button type="button" class="info" aria-label="Erklärung: Ende (optional)" data-tip="Nur ausfüllen, wenn dein Arbeitstag schon vorbei ist. Dann siehst du, wie viel du heute gearbeitet hast und wie sich dein Saldo ändert." data-align="right">?</button></div>
+                        <label for="end-time">Ende (optional)</label>
                         <div class="input-group">
                             <input type="text" id="end-time" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
                             <button type="button" class="now" data-target="end-time" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
@@ -42,39 +42,25 @@
             </fieldset>
 
             <fieldset>
-                <legend>Pause</legend>
-                <div class="row">
-                    <div class="field">
-                        <label for="start-break-time">Pausenbeginn</label>
-                        <div class="input-group">
-                            <input type="text" id="start-break-time" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
-                            <button type="button" class="now" data-target="start-break-time" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label for="end-break-time">Pausenende</label>
-                        <div class="input-group">
-                            <input type="text" id="end-break-time" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
-                            <button type="button" class="now" data-target="end-break-time" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
-                        </div>
-                    </div>
-                </div>
+                <legend>Pausen</legend>
+                <div id="breaks"></div>
+                <button type="button" id="add-break" class="btn secondary add">+ Pause hinzufügen</button>
             </fieldset>
 
             <fieldset>
                 <legend>Vorgaben</legend>
                 <div class="row">
                     <div class="field">
-                        <div class="label-row"><label for="required-work-time">Tägliche Sollarbeitszeit</label><button type="button" class="info" aria-label="Erklärung: Tägliche Sollarbeitszeit" data-tip="Wie lange du pro Tag arbeiten musst, ohne Pause. Daraus wird deine Gehzeit berechnet.">?</button></div>
+                        <label for="required-work-time">Tägliche Sollarbeitszeit</label>
                         <input type="text" id="required-work-time" inputmode="numeric" placeholder="08:24" value="08:24" autocomplete="off">
                     </div>
                     <div class="field">
-                        <div class="label-row"><label for="max-work-time">Maximale Arbeitszeit</label><button type="button" class="info" aria-label="Erklärung: Maximale Arbeitszeit" data-tip="Die längste Arbeitszeit pro Tag, die du nicht überschreiten willst oder darfst. Daraus ergibt sich die späteste Gehzeit." data-align="right">?</button></div>
+                        <label for="max-work-time">Maximale Arbeitszeit</label>
                         <input type="text" id="max-work-time" inputmode="numeric" placeholder="10:00" value="10:00" autocomplete="off">
                     </div>
                 </div>
                 <div class="field">
-                    <div class="label-row"><label for="current-overtime">Überstunden-Saldo</label><button type="button" class="info" aria-label="Erklärung: Überstunden-Saldo" data-tip="Deine bisher angesammelten Überstunden. Plus = Überstunden, Minus = Minusstunden. Eingabe als +1:30, -0:45 oder in Minuten (90).">?</button></div>
+                    <label for="current-overtime">Überstunden-Saldo</label>
                     <input type="text" id="current-overtime" placeholder="+1:30 oder 90 (Minuten)" value="0" autocomplete="off">
                     <span class="help">Als +1:30 / -0:45 oder in Minuten. Negativ = Minusstunden.</span>
                 </div>

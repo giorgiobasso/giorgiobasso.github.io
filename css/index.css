@@ -597,3 +597,48 @@ form .btn {
 .answer .label .info {
   margin-left: 8px;
 }
+
+/* Mehrere Pausen */
+.break {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+#breaks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.break-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.remove-break {
+  font: inherit;
+  font-size: 12px;
+  color: var(--danger);
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  padding: 2px 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.remove-break:hover {
+  background: var(--bg-hover);
+}
+
+.btn.add {
+  align-self: flex-start;
+  height: 32px;
+  font-size: 13px;
+  margin-top: 4px;
+}
