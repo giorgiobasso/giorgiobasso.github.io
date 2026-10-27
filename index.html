@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,33 +7,27 @@
     <link rel="stylesheet" href="/css/index.css" />
   </head>
   <body>
-    <div class="container">
-      <div class="header">
-        <h1>Hello World</h1>
+    <header class="site-header">
+      <div class="inner">
+        <a href="/index.html" class="brand">Giorgio Basso</a>
+        <nav>
+          <a href="/index.html" aria-current="page">Start</a>
+          <a href="/html/projects.html">Projekte</a>
+        </nav>
       </div>
-      <div class="menu">
-        <div>
-          <a href="/html/projects.html" class="animated-text-link"
-            >My Projects</a
-          >
-        </div>
-        <div>
-          <a href="/html/projects.html" class="animated-text-link">Me</a>
-        </div>
-        <div>
-          <a href="/html/projects.html" class="animated-text-link">My Links</a>
-        </div>
+    </header>
+    <main>
+      <h1>Hallo, ich bin Giorgio.</h1>
+      <p class="lead">
+        Willkommen auf meiner persönlichen Website. Ich baue kleine Tools und
+        Nebenprojekte – schau dir an, was bisher entstanden ist.
+      </p>
+      <div class="actions">
+        <a href="/html/projects.html" class="btn">Projekte ansehen</a>
       </div>
-      <div class="content">
-        <h2>Welcome to my personal website!</h2>
-        <p>
-          This is a simple HTML page with a button that redirects to another
-          page.
-        </p>
-      </div>
-      <div class="footer">
-        <p>&copy; 2026 Giorgio Basso</p>
-      </div>
-    </div>
+    </main>
+    <footer class="site-footer">
+      <div class="inner">&copy; 2026 Giorgio Basso</div>
+    </footer>
   </body>
 </html>

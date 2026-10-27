@@ -1,67 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>When can I leave?</title>
-    <link rel="stylesheet" href="/css/whencanileave.css">
+    <title>When can I leave? – Giorgio Basso</title>
     <link rel="stylesheet" href="/css/index.css">
-
     <script src="/js/whencanileave.js" defer></script>
 </head>
 <body>
-    <h1>When can I leave?</h1>
-    <p>When can I leave is a site to calculate your overtime at the end of a day,<br>so you can see when you can leave without having to <br>sacrifice your overtime or get too much minus time.</p>
-    
-    <div class="calculator-container">
-        <h2>Overtime Calculator</h2>
-        <form id="overtime-form">
-            <div class="input-section work-times">
-                <h4>Work Times</h4>
-                <div class="form-group time-pair">
-                    <div class="time-input-wrapper">
-                        <label for="start-time">Start Time:</label>
-                        <input type="text" id="start-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+    <header class="site-header">
+        <div class="inner">
+            <a href="/index.html" class="brand">Giorgio Basso</a>
+            <nav>
+                <a href="/index.html">Start</a>
+                <a href="/html/projects.html" aria-current="page">Projekte</a>
+            </nav>
+        </div>
+    </header>
+    <main>
+        <h1>When can I leave?</h1>
+        <p class="lead">Berechne deine Überstunden am Ende des Tages und sieh, wann du gehen kannst, ohne Überstunden zu opfern oder zu viel Minuszeit anzusammeln.</p>
+        <form id="overtime-form" novalidate>
+            <fieldset>
+                <legend>Arbeitszeit</legend>
+                <div class="row">
+                    <div class="field">
+                        <label for="start-time">Beginn</label>
+                        <div class="input-group">
+                            <input type="text" id="start-time" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
+                            <button type="button" class="now" data-target="start-time" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
+                        </div>
                     </div>
-                    <div class="time-input-wrapper">
-                        <label for="end-time">End Time:</label>
-                        <input type="text" id="end-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+                    <div class="field">
+                        <label for="end-time">Ende (optional)</label>
+                        <div class="input-group">
+                            <input type="text" id="end-time" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
+                            <button type="button" class="now" data-target="end-time" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </fieldset>
 
-            <div class="input-section break-times">
-                
-                <h4>Break Times</h4>
-                <div class="form-group time-pair">
-                    <div class="time-input-wrapper">
-                        <label for="start-break-time">Start Break:</label>
-                        <input type="text" id="start-break-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+            <fieldset>
+                <legend>Pause</legend>
+                <div class="row">
+                    <div class="field">
+                        <label for="start-break-time">Pausenbeginn</label>
+                        <div class="input-group">
+                            <input type="text" id="start-break-time" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
+                            <button type="button" class="now" data-target="start-break-time" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
+                        </div>
                     </div>
-                    <div class="time-input-wrapper">
-                        <label for="end-break-time">End Break:</label>
-                        <input type="text" id="end-break-time" class="time-input" placeholder="HH:MM" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
+                    <div class="field">
+                        <label for="end-break-time">Pausenende</label>
+                        <div class="input-group">
+                            <input type="text" id="end-break-time" inputmode="numeric" placeholder="HH:MM" autocomplete="off">
+                            <button type="button" class="now" data-target="end-break-time" title="Aktuelle Uhrzeit eintragen">Jetzt</button>
+                        </div>
                     </div>
                 </div>
-            </div>
-           
-            <div class="input-section other-inputs">
-                <div class="form-group">
-                    <label for="required-work-time">Required Daily Work (HH:MM):</label>
-                    <input type="text" id="required-work-time" placeholder="08:24" value="08:24" pattern="^([01]\d|2[0-3]):([0-5]\d)$" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="current-overtime">Current Total Overtime (minutes):</label>
-                    <input type="number" id="current-overtime" value="0" required>
-                </div>
-            </div>
+            </fieldset>
 
-            <button type="submit">Calculate Overtime</button>
+            <fieldset>
+                <legend>Vorgaben</legend>
+                <div class="row">
+                    <div class="field">
+                        <label for="required-work-time">Tägliche Sollarbeitszeit</label>
+                        <input type="text" id="required-work-time" inputmode="numeric" placeholder="08:24" value="08:24" autocomplete="off">
+                    </div>
+                    <div class="field">
+                        <label for="max-work-time">Maximale Arbeitszeit</label>
+                        <input type="text" id="max-work-time" inputmode="numeric" placeholder="10:00" value="10:00" autocomplete="off">
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="current-overtime">Überstunden-Saldo</label>
+                    <input type="text" id="current-overtime" placeholder="+1:30 oder 90 (Minuten)" value="0" autocomplete="off">
+                    <span class="help">Als +1:30 / -0:45 oder in Minuten. Negativ = Minusstunden.</span>
+                </div>
+            </fieldset>
+
+            <button type="button" id="reset-day" class="btn secondary">Tag zurücksetzen</button>
         </form>
-
-        <div id="result">
-            </div>
-    </div>
+        <div id="result" aria-live="polite"></div>
+    </main>
+    <footer class="site-footer">
+        <div class="inner">&copy; 2026 Giorgio Basso</div>
+    </footer>
 </body>
 </html>
